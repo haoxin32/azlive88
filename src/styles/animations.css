@@ -1,0 +1,197 @@
+/*
+  All keyframes animate only transform/opacity (perf-safe, no layout thrash).
+  Every animation here is neutralized by the reduced-motion rule in globals.css.
+*/
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.reveal-visible {
+  animation: reveal-up 0.6s var(--ease-out-soft) forwards;
+}
+
+@keyframes logo-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse 4s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/*
+  Button shine: a single controlled sweep triggered only on hover/focus,
+  not an infinite loop — driven by transition, not a repeating keyframe.
+*/
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s var(--ease-out-soft);
+  pointer-events: none;
+}
+
+.btn-shine:hover::after,
+.btn-shine:focus-visible::after {
+  transform: translateX(120%);
+}
+
+@keyframes stat-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-stat-glow {
+  animation: stat-glow-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes stat-shimmer {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(320%);
+  }
+}
+
+.animate-stat-shimmer {
+  animation: stat-shimmer 3.2s linear infinite;
+}
+
+/*
+  Game card light sweep: same controlled-sweep technique as .btn-shine
+  (transform-driven, transition-triggered, desktop-hover only — never an
+  infinite loop, never runs on touch devices).
+*/
+.card-sweep {
+  position: relative;
+}
+
+.card-sweep::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.16) 50%, transparent 58%);
+  transform: translateX(-130%);
+  transition: transform 650ms var(--ease-out-soft);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (min-width: 1024px) {
+  .card-sweep:hover::after {
+    transform: translateX(130%);
+  }
+}
+
+/* One-shot per-card reveal (fade + 12px rise), triggered by IntersectionObserver, staggered via inline transition-delay. */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.card-reveal-visible {
+  animation: card-in 500ms var(--ease-out-soft) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .card-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .card-reveal-visible {
+    animation: none;
+  }
+
+  .animate-logo-pulse,
+  .animate-float-slow,
+  .animate-marquee,
+  .animate-stat-glow,
+  .animate-stat-shimmer {
+    animation: none;
+  }
+
+  .btn-shine::after,
+  .card-sweep::after {
+    transition: none;
+    display: none;
+  }
+}

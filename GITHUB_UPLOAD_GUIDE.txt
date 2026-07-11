@@ -1,0 +1,58 @@
+AZLIVE88 — Hướng dẫn upload lên GitHub
+========================================
+
+1) Tạo repository mới
+----------------------
+- Vào https://github.com/new
+- Đặt tên repo (vd: azlive88), chọn Private hoặc Public
+- KHÔNG tích "Add a README" / ".gitignore" / "license" (repo đã có sẵn các file này)
+- Bấm Create repository
+
+2) Upload source code
+----------------------
+Mở terminal tại thư mục project này (đã giải nén ZIP), chạy:
+
+  git init
+  git add .
+  git commit -m "Initial commit"
+  git branch -M main
+  git remote add origin https://github.com/<username>/<repo-name>.git
+  git push -u origin main
+
+3) Cài đặt dependencies
+------------------------
+  npm install
+
+4) Chạy dev server (local)
+----------------------------
+  npm run dev
+
+Mặc định chạy tại http://localhost:5173 (Vite sẽ tự chọn cổng trống nếu bị chiếm).
+
+5) Build production
+---------------------
+  npm run build
+
+Output nằm ở thư mục dist/ (không commit thư mục này lên Git — đã có trong .gitignore).
+Xem trước bản build bằng:
+
+  npm run preview
+
+6) Kiểm tra trước khi build/deploy (khuyến nghị)
+---------------------------------------------------
+  npm run typecheck
+  npm run lint
+  npm audit
+
+7) LƯU Ý QUAN TRỌNG — không upload .env
+------------------------------------------
+- KHÔNG tạo hoặc commit bất kỳ file .env, .env.local nào chứa key/token/secret thật.
+- File .gitignore đã chặn sẵn .env, .env.* (trừ .env.example nếu có).
+- Toàn bộ config public (URL, tracking ID...) nằm ở src/config/site.ts và
+  src/config/tracking.ts — đây là các giá trị public, an toàn để commit,
+  nhưng KHÔNG thêm secret/API key thật vào các file này.
+- Trước khi bật Google Analytics / Meta Pixel thật, chỉ cần điền ID vào
+  src/config/tracking.ts rồi build lại — không cần file .env riêng.
+
+Xem thêm SECURITY.md và SECURITY_HEADERS.md để biết chi tiết về bảo mật
+và cấu hình Content-Security-Policy khi deploy production.

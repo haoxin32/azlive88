@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/*
+  AZLIVE88 design tokens.
+  Single source of truth for color, radius, shadow and glow values —
+  components should reference these tokens instead of raw hex/rgba values.
+*/
+@theme {
+  --font-sans: "Inter Variable", "Inter Fallback", system-ui, "Segoe UI", Roboto, sans-serif;
+  /*
+    Orbitron has no Vietnamese-diacritic glyphs, so it is scoped to the
+    latin/numeric brand wordmark only (see Logo.tsx) — never applied to
+    Vietnamese heading copy, which stays on --font-sans for readability.
+  */
+  --font-display: "Orbitron Variable", "Inter Variable", system-ui, sans-serif;
+
+  --color-bg: #060b18;
+  --color-bg-elevated: #0a1226;
+  --color-surface: #0d1730;
+  --color-surface-elevated: #101b3a;
+  --color-border-subtle: rgba(120, 170, 255, 0.14);
+  --color-border-strong: rgba(120, 200, 255, 0.28);
+
+  --color-primary: #22d3ee;
+  --color-primary-strong: #06b6d4;
+  --color-secondary: #3b82f6;
+  --color-tertiary: #a855f7;
+  --color-accent: #facc15;
+
+  --color-text-primary: #eef4ff;
+  --color-text-secondary: #93a4c3;
+  --color-text-muted: #7c8bad;
+
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+
+  --shadow-card: 0 8px 30px -12px rgba(2, 6, 20, 0.7);
+  --shadow-card-lg: 0 24px 60px -20px rgba(2, 6, 20, 0.8);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --radius-pill: 999px;
+
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border-subtle);
+  }
+
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: 0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25), 0 0 40px -8px rgba(34, 211, 238, 0.45);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.25), 0 0 32px -10px rgba(250, 204, 21, 0.4);
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(120, 170, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120, 170, 255, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .snap-x-mandatory {
+    scroll-snap-type: x mandatory;
+  }
+
+  .snap-center {
+    scroll-snap-align: center;
+  }
+}
