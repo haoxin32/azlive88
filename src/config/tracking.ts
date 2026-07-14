@@ -8,7 +8,7 @@
  */
 export const trackingConfig = {
   ga4MeasurementId: 'G-3SM1QXED08',
-  metaPixelId: null as string | null,
+  metaPixelId: '970371719138828',
 }
 
 export const isGa4Enabled =
