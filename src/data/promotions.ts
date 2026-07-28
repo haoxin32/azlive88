@@ -22,7 +22,7 @@ export const promotions: Promotion[] = [
     pillLabel: 'Nạp đầu Thể thao 200%',
     pillIcon: 'trophy',
     title: 'NẠP ĐẦU - CỰC NGẦU NHẬN TỚI 200%',
-    imageSrc: '/images/categories/100%.jpg',
+    imageSrc: '/images/categories/promo-sports-200.jpg',
     imageAlt: 'Nạp đầu - Cực ngầu nhận tới 200%',
     details: [
       { label: 'Thời gian khuyến mãi', value: 'Dài hạn' },
@@ -45,7 +45,7 @@ export const promotions: Promotion[] = [
     pillLabel: 'Nạp lại 20%',
     pillIcon: 'badge-check',
     title: 'THƯỞNG NẠP LẠI 20%',
-    imageSrc: '/images/categories/20%.jpg',
+    imageSrc: '/images/categories/promo-reload-20.jpg',
     imageAlt: 'Thưởng nạp lại 20%',
     details: [
       { label: 'Thời gian khuyến mãi', value: 'Dài hạn' },
