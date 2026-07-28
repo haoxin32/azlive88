@@ -13,7 +13,7 @@ function debugLog(...args: unknown[]) {
   }
 }
 
-export type CtaSource = 'header' | 'hero' | 'mobile_menu' | 'mobile_sticky_cta' | 'footer'
+export type CtaSource = 'header' | 'hero' | 'mobile_menu' | 'mobile_sticky_cta' | 'footer' | 'gift_box' | 'promotions_section'
 
 let trackingDisabled = false
 let hasInitialized = false

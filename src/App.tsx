@@ -3,9 +3,10 @@ import { SkipLink } from './components/layout/SkipLink'
 import { Header } from './components/layout/Header'
 import { Footer } from './components/layout/Footer'
 import { MobileStickyCta } from './components/layout/MobileStickyCta'
+import { GiftBox } from './components/layout/GiftBox'
 import { HeroSection } from './components/sections/HeroSection'
 import { TrustSection } from './components/sections/TrustSection'
-import { PartnersSection } from './components/sections/PartnersSection'
+import { PromotionsSection } from './components/sections/PromotionsSection'
 import { GameEcosystemSection } from './components/sections/GameEcosystemSection'
 import { StatsSection } from './components/sections/StatsSection'
 import { BenefitsSection } from './components/sections/BenefitsSection'
@@ -27,11 +28,13 @@ function App() {
       <main id="main-content">
         <HeroSection />
         <TrustSection />
-        <PartnersSection />
 
         <Reveal>
           <GameEcosystemSection />
         </Reveal>
+
+        <PromotionsSection />
+
         <Reveal>
           <StatsSection />
         </Reveal>
@@ -59,7 +62,7 @@ function App() {
 
       <Footer />
       <MobileStickyCta />
-    </>
+      <GiftBox /></>
   )
 }
 

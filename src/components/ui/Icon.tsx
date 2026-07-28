@@ -33,6 +33,7 @@ import {
   MonitorSmartphone,
   Smartphone,
   QrCode,
+  Gift,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -72,6 +73,7 @@ const iconMap = {
   'monitor-smartphone': MonitorSmartphone,
   smartphone: Smartphone,
   'qr-code': QrCode,
+  gift: Gift,
 } as const satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof iconMap
