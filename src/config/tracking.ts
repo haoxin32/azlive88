@@ -7,7 +7,7 @@
  * make the loader think tracking is enabled and start firing requests.
  */
 export const trackingConfig = {
-  ga4MeasurementId: 'G-Q82KLG9KCY',
+  ga4MeasurementId: 'G-LF9YCN00SZ',
   metaPixelId: '970371719138828',
 }
 
