@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 import { siteConfig } from '../src/config/site.ts'
 import { assets } from '../src/config/assets.ts'
 import { buildJsonLdGraph } from '../src/lib/schema.ts'
-import { isGa4Enabled, isMetaPixelEnabled } from '../src/config/tracking.ts'
+import { isGa4Enabled, isGtmEnabled, isMetaPixelEnabled, trackingConfig } from '../src/config/tracking.ts'
 
 function escapeHtmlAttr(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -60,6 +60,7 @@ export function seoStaticFiles(): Plugin {
   const scriptSrc = [`'self'`, `'${jsonLdHash}'`]
   const connectSrc = [`'self'`]
   const imgSrc = [`'self'`, 'data:']
+  const frameSrc = [`'self'`]
 
   if (isGa4Enabled) {
     scriptSrc.push('https://www.googletagmanager.com')
@@ -77,13 +78,27 @@ export function seoStaticFiles(): Plugin {
     imgSrc.push('https://www.facebook.com')
   }
 
+  // GTM injects its own script tag inline via the classic snippet (rather than
+  // a data-tracking-tagged <script src>, which is how GA4/Meta are loaded by
+  // src/lib/tracking.ts), so it also needs the noscript <iframe> fallback's
+  // domain allowed on frame-src.
+  if (isGtmEnabled) {
+    scriptSrc.push('https://www.googletagmanager.com')
+    connectSrc.push('https://www.googletagmanager.com')
+    imgSrc.push('https://www.googletagmanager.com')
+    frameSrc.push('https://www.googletagmanager.com')
+  }
+
+  const dedupe = (values: string[]) => [...new Set(values)]
+
   const cspPolicy = [
     `default-src 'self'`,
-    `script-src ${scriptSrc.join(' ')}`,
+    `script-src ${dedupe(scriptSrc).join(' ')}`,
     `style-src 'self'`,
-    `img-src ${imgSrc.join(' ')}`,
+    `img-src ${dedupe(imgSrc).join(' ')}`,
     `font-src 'self'`,
-    `connect-src ${connectSrc.join(' ')}`,
+    `connect-src ${dedupe(connectSrc).join(' ')}`,
+    `frame-src ${dedupe(frameSrc).join(' ')}`,
     `object-src 'none'`,
     `frame-ancestors 'none'`,
     `base-uri 'self'`,
@@ -106,6 +121,24 @@ export function seoStaticFiles(): Plugin {
       ]
         .filter(Boolean)
         .join('\n') + '\n'
+    : ''
+
+  const gtmHeadScript = isGtmEnabled
+    ? `    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','${trackingConfig.gtmContainerId}');</script>
+    <!-- End Google Tag Manager -->
+`
+    : ''
+
+  const gtmBodyNoscript = isGtmEnabled
+    ? `    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${trackingConfig.gtmContainerId}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+`
     : ''
 
   return {
@@ -144,13 +177,18 @@ export function seoStaticFiles(): Plugin {
         // Hero preload goes as early as possible in <head> (right after the
         // viewport meta) so the browser's preload scanner sees it before
         // ~20 lines of SEO/OG meta tags it doesn't need to render first.
+        // GTM's snippet goes immediately inside <head>, ahead of every other
+        // tag, per Google's install instructions.
+        const withGtmHead = html.replace('<head>', `<head>\n${gtmHeadScript}`)
         const withPreload = heroPreloadHtml
-          ? html.replace(
+          ? withGtmHead.replace(
               '<meta name="viewport" content="width=device-width, initial-scale=1.0" />',
               `<meta name="viewport" content="width=device-width, initial-scale=1.0" />\n${heroPreloadHtml}`,
             )
-          : html
-        return withPreload.replace('</head>', `${metaHtml}  </head>`)
+          : withGtmHead
+        const withHeadMeta = withPreload.replace('</head>', `${metaHtml}  </head>`)
+        // GTM's noscript fallback goes immediately after the opening <body> tag.
+        return withHeadMeta.replace('<body>', `<body>\n${gtmBodyNoscript}`)
       },
     },
     generateBundle() {
@@ -197,7 +235,8 @@ export function seoStaticFiles(): Plugin {
         source:
           `${cspPolicy}\n\n` +
           `GA4 enabled: ${isGa4Enabled}\n` +
-          `Meta Pixel enabled: ${isMetaPixelEnabled}\n\n` +
+          `Meta Pixel enabled: ${isMetaPixelEnabled}\n` +
+          `GTM enabled: ${isGtmEnabled}\n\n` +
           `Paste the policy line above as-is into your Content-Security-Policy header ` +
           `(see SECURITY_HEADERS.md for the per-host examples). Regenerated on every build — ` +
           `it already reflects the current src/config/site.ts (JSON-LD hash) and ` +
@@ -206,7 +245,9 @@ export function seoStaticFiles(): Plugin {
 
       console.log(`\n[seo-static-files] JSON-LD script-src hash: '${jsonLdHash}'`)
       console.log('[seo-static-files] (also written to dist/csp-script-hash.txt)')
-      console.log(`[seo-static-files] CSP policy (GA4: ${isGa4Enabled}, Meta Pixel: ${isMetaPixelEnabled}):`)
+      console.log(
+        `[seo-static-files] CSP policy (GA4: ${isGa4Enabled}, Meta Pixel: ${isMetaPixelEnabled}, GTM: ${isGtmEnabled}):`,
+      )
       console.log(`  ${cspPolicy}`)
       console.log('[seo-static-files] (also written to dist/csp-policy.txt)\n')
     },

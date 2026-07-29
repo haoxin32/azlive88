@@ -3,6 +3,7 @@ import { trackingConfig } from '../src/config/tracking.ts'
 
 const GA4_ID_PATTERN = /^G-[A-Z0-9]{4,}$/
 const META_PIXEL_ID_PATTERN = /^[0-9]+$/
+const GTM_ID_PATTERN = /^GTM-[A-Z0-9]{4,}$/
 
 /**
  * Validates src/config/tracking.ts before a build: when an ID is set (not
@@ -33,6 +34,12 @@ export function validateTrackingConfig(): Plugin {
 
       if (trackingConfig.metaPixelId !== null && !META_PIXEL_ID_PATTERN.test(trackingConfig.metaPixelId)) {
         violations.push(`metaPixelId "${trackingConfig.metaPixelId}" must contain digits only`)
+      }
+
+      if (trackingConfig.gtmContainerId !== null && !GTM_ID_PATTERN.test(trackingConfig.gtmContainerId)) {
+        violations.push(
+          `gtmContainerId "${trackingConfig.gtmContainerId}" does not match the expected "GTM-XXXXXXX" format`,
+        )
       }
 
       if (violations.length === 0) return
