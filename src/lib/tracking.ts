@@ -1,4 +1,4 @@
-import { trackingConfig, isGa4Enabled, isMetaPixelEnabled } from '@/config/tracking'
+import { trackingConfig, isGa4Enabled, isGtmEnabled, isMetaPixelEnabled } from '@/config/tracking'
 
 /**
  * Set to true only for local debugging — logs which event *would* be sent,
@@ -113,6 +113,17 @@ export function trackPageView() {
   }
 }
 
+/**
+ * Pushes a plain-object custom event to the dataLayer so GTM triggers can
+ * react to it (GTM only recognizes `{event: '...'}` objects, not the
+ * array-form arguments gtag() pushes for its own `config`/`event` calls).
+ */
+function pushGtmEvent(eventName: string, source: CtaSource, destinationUrl: string) {
+  if (!isGtmEnabled) return
+  window.dataLayer = window.dataLayer ?? []
+  window.dataLayer.push({ event: eventName, cta_source: source, link_url: destinationUrl })
+}
+
 export function trackRegisterClick(source: CtaSource, destinationUrl: string) {
   if (trackingDisabled) return
 
@@ -126,6 +137,7 @@ export function trackRegisterClick(source: CtaSource, destinationUrl: string) {
   if (isMetaPixelEnabled && window.fbq) {
     window.fbq('trackCustom', 'RegisterClick', { source, link_url: destinationUrl })
   }
+  pushGtmEvent('register_click', source, destinationUrl)
   debugLog('register_click', source, destinationUrl)
 }
 
@@ -142,6 +154,7 @@ export function trackLoginClick(source: CtaSource, destinationUrl: string) {
   if (isMetaPixelEnabled && window.fbq) {
     window.fbq('trackCustom', 'LoginClick', { source, link_url: destinationUrl })
   }
+  pushGtmEvent('login_click', source, destinationUrl)
   debugLog('login_click', source, destinationUrl)
 }
 

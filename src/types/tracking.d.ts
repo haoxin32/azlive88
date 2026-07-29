@@ -15,7 +15,7 @@ declare global {
   }
 
   interface Window {
-    dataLayer?: unknown[][]
+    dataLayer?: unknown[]
     gtag?: GtagFunction
     fbq?: FbqFunction
     _fbq?: FbqFunction
