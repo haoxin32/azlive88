@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Icon } from '../ui/Icon'
 import { PromoModal } from '../ui/PromoModal'
 import { promotions } from '@/data/promotions'
+import { trackPromoOpen } from '@/lib/tracking'
 
 const promo = promotions.find((item) => item.id === 'fishing-daily')!
 
@@ -31,7 +32,10 @@ export function GiftBox() {
           <span aria-hidden="true" className="absolute inset-0 animate-ping rounded-full bg-primary/30" />
           <button
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              trackPromoOpen('gift_box', promo.id)
+              setIsOpen(true)
+            }}
             aria-label="Mở khuyến mãi đặc quyền"
             className="animate-float-slow glow-accent relative flex h-16 w-16 items-center justify-center rounded-full border border-amber-300/40 bg-gradient-to-br from-accent to-amber-600 transition-transform hover:scale-105"
           >

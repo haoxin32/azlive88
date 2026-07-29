@@ -118,10 +118,10 @@ export function trackPageView() {
  * react to it (GTM only recognizes `{event: '...'}` objects, not the
  * array-form arguments gtag() pushes for its own `config`/`event` calls).
  */
-function pushGtmEvent(eventName: string, source: CtaSource, destinationUrl: string) {
+function pushGtmEvent(eventName: string, params: Record<string, unknown>) {
   if (!isGtmEnabled) return
   window.dataLayer = window.dataLayer ?? []
-  window.dataLayer.push({ event: eventName, cta_source: source, link_url: destinationUrl })
+  window.dataLayer.push({ event: eventName, ...params })
 }
 
 export function trackRegisterClick(source: CtaSource, destinationUrl: string) {
@@ -137,7 +137,7 @@ export function trackRegisterClick(source: CtaSource, destinationUrl: string) {
   if (isMetaPixelEnabled && window.fbq) {
     window.fbq('trackCustom', 'RegisterClick', { source, link_url: destinationUrl })
   }
-  pushGtmEvent('register_click', source, destinationUrl)
+  pushGtmEvent('register_click', { cta_source: source, link_url: destinationUrl })
   debugLog('register_click', source, destinationUrl)
 }
 
@@ -154,8 +154,23 @@ export function trackLoginClick(source: CtaSource, destinationUrl: string) {
   if (isMetaPixelEnabled && window.fbq) {
     window.fbq('trackCustom', 'LoginClick', { source, link_url: destinationUrl })
   }
-  pushGtmEvent('login_click', source, destinationUrl)
+  pushGtmEvent('login_click', { cta_source: source, link_url: destinationUrl })
   debugLog('login_click', source, destinationUrl)
+}
+
+/** Fired when a promo popup (gift box, promotions section card) is opened. */
+export function trackPromoOpen(source: CtaSource, promoId: string) {
+  if (trackingDisabled) return
+
+  if (isGa4Enabled && window.gtag) {
+    window.gtag('event', 'promo_open', {
+      event_category: 'Engagement',
+      event_label: source,
+      promo_id: promoId,
+    })
+  }
+  pushGtmEvent('promo_open', { cta_source: source, promo_id: promoId })
+  debugLog('promo_open', source, promoId)
 }
 
 /**

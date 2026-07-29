@@ -4,6 +4,7 @@ import { SectionHeading } from '../ui/SectionHeading'
 import { Icon } from '../ui/Icon'
 import { PromoModal } from '../ui/PromoModal'
 import { promotions } from '@/data/promotions'
+import { trackPromoOpen } from '@/lib/tracking'
 
 const cardPromotions = promotions.filter((item) => item.id !== 'fishing-daily')
 
@@ -30,7 +31,10 @@ export function PromotionsSection() {
             <li key={promo.id} className="snap-center">
               <button
                 type="button"
-                onClick={() => setOpenPromoId(promo.id)}
+                onClick={() => {
+                  trackPromoOpen('promotions_section', promo.id)
+                  setOpenPromoId(promo.id)
+                }}
                 className="card-sweep group flex w-full flex-col overflow-hidden rounded-lg border border-border-subtle bg-slate-950 shadow-card transition-transform duration-300 hover:-translate-y-1 hover:border-amber-400/40 active:translate-y-0 active:scale-[0.98]"
               >
                 <div className="relative aspect-[2.4/1] w-full overflow-hidden bg-slate-950">
